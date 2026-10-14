@@ -1,0 +1,274 @@
+{
+  "name": "Northstar \u00b7 Billing Service",
+  "fingerprint": "ce0bad03ce07",
+  "files": {
+    "RUNBOOK.md": "# Incident INC-042 \u00b7 Invoice creation fails after migration\n\nSymptom: invoice_endpoint(1, 100) raises KeyError: 'full_name'.\nChange: customer schema v2 renamed full_name to display_name.\nThe customer service now returns display_name; the invoice service still reads full_name.\nInvestigate the producer in customers.py and consumer in invoices.py.\nFix the consumer, then verify invoice names, totals and unknown-customer behaviour.\nThis is a deliberately seeded training incident, not a real customer outage.\n",
+    "api.py": "\"\"\"Entry point for the demonstration billing service.\"\"\"\nfrom invoices import create_invoice\nfrom reporting import invoice_count\n\n\ndef invoice_endpoint(customer_id, subtotal):\n    return create_invoice(customer_id, subtotal)\n\n\ndef health():\n    return {\"status\": \"ok\"}\n",
+    "customers.py": "\"\"\"Customer records. Schema v2 renamed full_name to display_name.\"\"\"\nCUSTOMERS = {1: {\"id\": 1, \"display_name\": \"Northstar Logistics\", \"tax_id\": \"SYNTHETIC-001\"}}\n\n\ndef get_customer(customer_id):\n    return CUSTOMERS[customer_id].copy()\n",
+    "invoices.py": "\"\"\"Invoice generation still expects the v1 customer schema.\"\"\"\nfrom customers import get_customer\n\n\ndef create_invoice(customer_id, subtotal):\n    customer = get_customer(customer_id)\n    return {\"customer\": customer[\"full_name\"], \"total\": round(subtotal * 1.15, 2)}\n",
+    "notifications.py": "\"\"\"Legacy notification helper: mutable state and a broad handler.\"\"\"\ndef record_delivery(message, history=[]):\n    try:\n        history.append(message)\n        return history\n    except:\n        return []\n",
+    "reporting.py": "\"\"\"An intentionally unsafe reporting query for the static analysis demo.\"\"\"\ndef invoice_count(connection, customer_name):\n    return connection.execute(f\"SELECT count(*) FROM invoices WHERE customer = '{customer_name}'\").fetchone()[0]\n",
+    "schema.sql": "-- Customer schema v2. All data in this project is synthetic.\nCREATE TABLE customers (id INTEGER PRIMARY KEY, display_name TEXT, tax_id TEXT);\nCREATE TABLE invoices (id INTEGER PRIMARY KEY, customer TEXT, total NUMERIC);\n",
+    "test_invoices.py": "import unittest\nfrom api import invoice_endpoint\nfrom customers import get_customer\n\n\nclass InvoiceTests(unittest.TestCase):\n    def test_customer_name(self):\n        self.assertEqual(invoice_endpoint(1, 100)['customer'], 'Northstar Logistics')\n\n    def test_total(self):\n        self.assertEqual(invoice_endpoint(1, 100)['total'], 115)\n\n    def test_zero_total(self):\n        self.assertEqual(invoice_endpoint(1, 0)['total'], 0)\n\n    def test_unknown_customer(self):\n        with self.assertRaises(KeyError):\n            invoice_endpoint(999, 100)\n\n    def test_customer_copy(self):\n        copy = get_customer(1)\n        copy['display_name'] = 'Changed'\n        self.assertEqual(get_customer(1)['display_name'], 'Northstar Logistics')\n\n\nif __name__ == '__main__':\n    unittest.main()\n"
+  },
+  "nodes": [
+    {
+      "id": "RUNBOOK.md",
+      "label": "RUNBOOK.md",
+      "kind": "docs",
+      "lines": 8,
+      "functions": [],
+      "issues": 0
+    },
+    {
+      "id": "api.py",
+      "label": "api.py",
+      "kind": "module",
+      "lines": 11,
+      "functions": [
+        {
+          "name": "invoice_endpoint",
+          "line": 6,
+          "end": 7
+        },
+        {
+          "name": "health",
+          "line": 10,
+          "end": 11
+        }
+      ],
+      "issues": 0
+    },
+    {
+      "id": "customers.py",
+      "label": "customers.py",
+      "kind": "module",
+      "lines": 6,
+      "functions": [
+        {
+          "name": "get_customer",
+          "line": 5,
+          "end": 6
+        }
+      ],
+      "issues": 0
+    },
+    {
+      "id": "invoices.py",
+      "label": "invoices.py",
+      "kind": "module",
+      "lines": 7,
+      "functions": [
+        {
+          "name": "create_invoice",
+          "line": 5,
+          "end": 7
+        }
+      ],
+      "issues": 0
+    },
+    {
+      "id": "notifications.py",
+      "label": "notifications.py",
+      "kind": "module",
+      "lines": 7,
+      "functions": [
+        {
+          "name": "record_delivery",
+          "line": 2,
+          "end": 7
+        }
+      ],
+      "issues": 2
+    },
+    {
+      "id": "reporting.py",
+      "label": "reporting.py",
+      "kind": "module",
+      "lines": 3,
+      "functions": [
+        {
+          "name": "invoice_count",
+          "line": 2,
+          "end": 3
+        }
+      ],
+      "issues": 1
+    },
+    {
+      "id": "schema.sql",
+      "label": "schema.sql",
+      "kind": "database",
+      "lines": 3,
+      "functions": [],
+      "issues": 0
+    },
+    {
+      "id": "test_invoices.py",
+      "label": "test_invoices.py",
+      "kind": "module",
+      "lines": 27,
+      "functions": [
+        {
+          "name": "test_customer_name",
+          "line": 7,
+          "end": 8
+        },
+        {
+          "name": "test_total",
+          "line": 10,
+          "end": 11
+        },
+        {
+          "name": "test_zero_total",
+          "line": 13,
+          "end": 14
+        },
+        {
+          "name": "test_unknown_customer",
+          "line": 16,
+          "end": 18
+        },
+        {
+          "name": "test_customer_copy",
+          "line": 20,
+          "end": 23
+        }
+      ],
+      "issues": 0
+    }
+  ],
+  "edges": [
+    {
+      "source": "api.py",
+      "target": "invoices.py",
+      "type": "imports",
+      "line": 2
+    },
+    {
+      "source": "api.py",
+      "target": "reporting.py",
+      "type": "imports",
+      "line": 3
+    },
+    {
+      "source": "invoices.py",
+      "target": "customers.py",
+      "type": "imports",
+      "line": 2
+    },
+    {
+      "source": "test_invoices.py",
+      "target": "api.py",
+      "type": "imports",
+      "line": 2
+    },
+    {
+      "source": "test_invoices.py",
+      "target": "customers.py",
+      "type": "imports",
+      "line": 3
+    }
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "path": "notifications.py",
+      "line": 2,
+      "severity": "medium",
+      "title": "Mutable default argument",
+      "detail": "This object is shared across calls and can leak state between requests.",
+      "rule": "mutable-default"
+    },
+    {
+      "id": "F02",
+      "path": "notifications.py",
+      "line": 6,
+      "severity": "medium",
+      "title": "Bare exception handler",
+      "detail": "This catches interrupts and can obscure failures. Catch a specific exception and preserve context.",
+      "rule": "bare-except"
+    },
+    {
+      "id": "F03",
+      "path": "reporting.py",
+      "line": 3,
+      "severity": "high",
+      "title": "Constructed SQL query",
+      "detail": "SQL is assembled dynamically at this call. Use bound parameters for untrusted values; inspect the data flow.",
+      "rule": "sql-interpolation"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "E001",
+      "path": "RUNBOOK.md",
+      "start": 1,
+      "end": 8,
+      "text": "# Incident INC-042 \u00b7 Invoice creation fails after migration\n\nSymptom: invoice_endpoint(1, 100) raises KeyError: 'full_name'.\nChange: customer schema v2 renamed full_name to display_name.\nThe customer service now returns display_name; the invoice service still reads full_name.\nInvestigate the producer in customers.py and consumer in invoices.py.\nFix the consumer, then verify invoice names, totals and unknown-customer behaviour.\nThis is a deliberately seeded training incident, not a real customer outage."
+    },
+    {
+      "id": "E002",
+      "path": "api.py",
+      "start": 1,
+      "end": 11,
+      "text": "\"\"\"Entry point for the demonstration billing service.\"\"\"\nfrom invoices import create_invoice\nfrom reporting import invoice_count\n\n\ndef invoice_endpoint(customer_id, subtotal):\n    return create_invoice(customer_id, subtotal)\n\n\ndef health():\n    return {\"status\": \"ok\"}"
+    },
+    {
+      "id": "E003",
+      "path": "customers.py",
+      "start": 1,
+      "end": 6,
+      "text": "\"\"\"Customer records. Schema v2 renamed full_name to display_name.\"\"\"\nCUSTOMERS = {1: {\"id\": 1, \"display_name\": \"Northstar Logistics\", \"tax_id\": \"SYNTHETIC-001\"}}\n\n\ndef get_customer(customer_id):\n    return CUSTOMERS[customer_id].copy()"
+    },
+    {
+      "id": "E004",
+      "path": "invoices.py",
+      "start": 1,
+      "end": 7,
+      "text": "\"\"\"Invoice generation still expects the v1 customer schema.\"\"\"\nfrom customers import get_customer\n\n\ndef create_invoice(customer_id, subtotal):\n    customer = get_customer(customer_id)\n    return {\"customer\": customer[\"full_name\"], \"total\": round(subtotal * 1.15, 2)}"
+    },
+    {
+      "id": "E005",
+      "path": "notifications.py",
+      "start": 1,
+      "end": 7,
+      "text": "\"\"\"Legacy notification helper: mutable state and a broad handler.\"\"\"\ndef record_delivery(message, history=[]):\n    try:\n        history.append(message)\n        return history\n    except:\n        return []"
+    },
+    {
+      "id": "E006",
+      "path": "reporting.py",
+      "start": 1,
+      "end": 3,
+      "text": "\"\"\"An intentionally unsafe reporting query for the static analysis demo.\"\"\"\ndef invoice_count(connection, customer_name):\n    return connection.execute(f\"SELECT count(*) FROM invoices WHERE customer = '{customer_name}'\").fetchone()[0]"
+    },
+    {
+      "id": "E007",
+      "path": "schema.sql",
+      "start": 1,
+      "end": 3,
+      "text": "-- Customer schema v2. All data in this project is synthetic.\nCREATE TABLE customers (id INTEGER PRIMARY KEY, display_name TEXT, tax_id TEXT);\nCREATE TABLE invoices (id INTEGER PRIMARY KEY, customer TEXT, total NUMERIC);"
+    },
+    {
+      "id": "E008",
+      "path": "test_invoices.py",
+      "start": 1,
+      "end": 24,
+      "text": "import unittest\nfrom api import invoice_endpoint\nfrom customers import get_customer\n\n\nclass InvoiceTests(unittest.TestCase):\n    def test_customer_name(self):\n        self.assertEqual(invoice_endpoint(1, 100)['customer'], 'Northstar Logistics')\n\n    def test_total(self):\n        self.assertEqual(invoice_endpoint(1, 100)['total'], 115)\n\n    def test_zero_total(self):\n        self.assertEqual(invoice_endpoint(1, 0)['total'], 0)\n\n    def test_unknown_customer(self):\n        with self.assertRaises(KeyError):\n            invoice_endpoint(999, 100)\n\n    def test_customer_copy(self):\n        copy = get_customer(1)\n        copy['display_name'] = 'Changed'\n        self.assertEqual(get_customer(1)['display_name'], 'Northstar Logistics')\n"
+    },
+    {
+      "id": "E009",
+      "path": "test_invoices.py",
+      "start": 25,
+      "end": 27,
+      "text": "\nif __name__ == '__main__':\n    unittest.main()"
+    }
+  ],
+  "warnings": [],
+  "stats": {
+    "files": 8,
+    "lines": 72,
+    "functions": 11,
+    "findings": 3
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "generated_at": "2026-10-14T08:55:30.775088+00:00",
+  "python": "3.14.4",
+  "rule_count": 5,
+  "cases": [
+    {
+      "id": "LL-001",
+      "name": "Schema incident retrieves migration runbook first",
+      "passed": true
+    },
+    {
+      "id": "LL-002",
+      "name": "Invoice query retrieves consumer source in top 3",
+      "passed": true
+    },
+    {
+      "id": "LL-003",
+      "name": "Unknown terminology returns no evidence",
+      "passed": true
+    },
+    {
+      "id": "LL-004",
+      "name": "Unsupported diagnosis abstains",
+      "passed": true
+    },
+    {
+      "id": "LL-005",
+      "name": "Customer change reaches invoice and API",
+      "passed": true
+    },
+    {
+      "id": "LL-006",
+      "name": "Disconnected module has no importers",
+      "passed": true
+    },
+    {
+      "id": "LL-007",
+      "name": "Every citation reproduces the exact source window",
+      "passed": true
+    },
+    {
+      "id": "LL-008",
+      "name": "Detects sql-interpolation",
+      "passed": true
+    },
+    {
+      "id": "LL-009",
+      "name": "Detects bare-except",
+      "passed": true
+    },
+    {
+      "id": "LL-010",
+      "name": "Detects mutable-default",
+      "passed": true
+    },
+    {
+      "id": "LL-011",
+      "name": "Detects dynamic-exec",
+      "passed": true
+    },
+    {
+      "id": "LL-012",
+      "name": "Detects missing-timeout",
+      "passed": true
+    },
+    {
+      "id": "LL-013",
+      "name": "Bound SQL parameters avoid SQL interpolation finding",
+      "passed": true
+    },
+    {
+      "id": "LL-014",
+      "name": "Explicit HTTP timeout avoids timeout finding",
+      "passed": true
+    },
+    {
+      "id": "LL-015",
+      "name": "Broken Python reports a parse warning",
+      "passed": true
+    },
+    {
+      "id": "LL-016",
+      "name": "Cyclic dependencies terminate",
+      "passed": true
+    },
+    {
+      "id": "LL-017",
+      "name": "Original invoice tests fail",
+      "passed": true
+    },
+    {
+      "id": "LL-018",
+      "name": "All five patched invoice tests pass",
+      "passed": true
+    },
+    {
+      "id": "LL-019",
+      "name": "Bundled source remains unchanged after repair",
+      "passed": true
+    }
+  ],
+  "scope": "Deterministic engine regression checks and trusted-fixture repair. Not an LLM accuracy benchmark.",
+  "source_fingerprint": "ce0bad03ce07"
+}

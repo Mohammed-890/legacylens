@@ -1,0 +1,8 @@
+{
+  "id": "1a4fba0a9f6b14b2",
+  "path": "invoices.py",
+  "diff": "--- a/invoices.py\n+++ b/invoices.py\n@@ -4,4 +4,4 @@\n \n def create_invoice(customer_id, subtotal):\n     customer = get_customer(customer_id)\n-    return {\"customer\": customer[\"full_name\"], \"total\": round(subtotal * 1.15, 2)}\n+    return {\"customer\": customer[\"display_name\"], \"total\": round(subtotal * 1.15, 2)}\n",
+  "summary": "Update the invoice consumer to the customer schema v2 field.",
+  "origin": "Maintainer-authored demonstration repair",
+  "scope": "Disposable copy of the bundled invoice fixture only. Your imported files are never modified."
+}

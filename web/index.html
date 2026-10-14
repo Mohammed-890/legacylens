@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#101311" />
+    <meta
+      name="description"
+      content="LegacyLens by Mohammed Banabilh. Explore code dependencies, investigate with cited evidence, and verify a repair against real tests."
+    />
+    <title>LegacyLens · Software intelligence</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="LegacyLens home"
+        ><span class="brand-icon">⌘</span> LegacyLens<span class="brand-dot"
+          >.</span
+        ></a
+      >
+      <div class="workspace">
+        <span class="workspace-mark">MB</span>
+        <div>
+          Mohammed’s workspace<small>Engineering lab <span>⌄</span></small>
+        </div>
+      </div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <button class="nav-item active" data-page="overview">
+          <span>◈</span> System overview <kbd>1</kbd>
+        </button>
+        <button class="nav-item" data-page="investigation">
+          <span>⌕</span> Investigate <kbd>2</kbd>
+        </button>
+        <button class="nav-item" data-page="repair">
+          <span>⤴</span> Repair lab <kbd>3</kbd>
+        </button>
+        <button class="nav-item" data-page="evaluation">
+          <span>▤</span> Evaluations <kbd>4</kbd>
+        </button>
+      </nav>
+      <p class="nav-label repo-label">REPOSITORY</p>
+      <button class="repo-switch" id="reset-demo">
+        <span class="repo-dot"></span
+        ><span id="sidebar-repo">northstar / billing-service</span
+        ><span>↗</span>
+      </button>
+      <div class="rail-note">
+        <span class="status-dot"></span><strong>Evidence comes first.</strong>
+        <p>
+          Every finding leads back to source. Every repair earns its green
+          check.
+        </p>
+      </div>
+      <div class="sidebar-bottom">
+        <a
+          id="github-link"
+          href="https://github.com/Mohammed-890/legacylens"
+          target="_blank"
+          rel="noreferrer"
+          >↗ View source on GitHub</a
+        ><span
+          >Built by Mohammed Banabilh<small
+            >AI-assisted development · v0.1</small
+          ></span
+        >
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <div class="breadcrumb">
+          Workspace <span>/</span> <strong id="crumb">System overview</strong>
+        </div>
+        <div class="top-actions">
+          <span class="mode-badge" id="mode">Loading workspace</span
+          ><button class="button small" id="about-button">
+            How it works <span>↗</span>
+          </button>
+        </div>
+      </header>
+      <main>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">
+              UNDERSTAND THE SYSTEM. CHANGE IT WITH CONFIDENCE.
+            </p>
+            <h1 id="page-title">Make the invisible <em>visible.</em></h1>
+            <p id="page-description">
+              From tangled source to a clear picture. Explore what connects,
+              what breaks, and why.
+            </p>
+          </div>
+          <button class="button primary" id="import-button">
+            <span>＋</span> Import repository</button
+          ><input
+            id="folder-input"
+            type="file"
+            webkitdirectory
+            multiple
+            hidden
+          />
+        </div>
+        <div id="notice" class="notice" hidden></div>
+        <section id="overview" class="page active" aria-label="System overview">
+          <div class="stats" id="stats"></div>
+          <div class="overview-grid">
+            <section class="panel graph-panel">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">ARCHITECTURE EXPLORER</span>
+                  <h2>Your code, connected.</h2>
+                </div>
+                <div class="view-toggle" aria-label="Map view">
+                  <button class="active" id="city-view">City</button
+                  ><button id="graph-view">Graph</button>
+                </div>
+              </div>
+              <div class="graph-meta">
+                <span
+                  ><span class="status-dot"></span
+                  ><span id="project-name"
+                    >Northstar · Billing Service</span
+                  ></span
+                ><span id="fingerprint"></span>
+              </div>
+              <div
+                id="map"
+                class="map"
+                aria-label="Interactive file dependency map"
+              ></div>
+              <div class="graph-footer">
+                <div>
+                  <span class="legend-dot green"></span> Module
+                  <span class="legend-dot orange"></span> Flagged
+                  <span class="legend-dot blue"></span> Data / docs
+                </div>
+                <span>Click a building to inspect ↗</span>
+              </div>
+            </section>
+            <section class="panel inspector">
+              <div class="panel-heading">
+                <span class="eyebrow">SOURCE INSPECTOR</span
+                ><span class="tiny-label">READ ONLY</span>
+              </div>
+              <div id="inspector-content"></div>
+            </section>
+          </div>
+          <section class="panel findings-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">STATIC ANALYSIS</span>
+                <h2>Small signals. Real consequences.</h2>
+              </div>
+              <span class="muted" id="finding-count"></span>
+            </div>
+            <div id="findings"></div>
+            <p class="panel-footnote">
+              Heuristic findings for review, not confirmed vulnerabilities.
+              Python AST analysis · import graph only.
+            </p>
+          </section>
+        </section>
+        <section id="investigation" class="page" aria-label="Investigation">
+          <div class="investigate-grid">
+            <section class="panel conversation">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">INVESTIGATION ROOM</span>
+                  <h2>Ask the code a better question.</h2>
+                </div>
+                <span class="tiny-label" id="agent-label">LOCAL EVIDENCE</span>
+              </div>
+              <div class="prompt-ideas">
+                <button
+                  data-question="Why does invoice creation fail with full_name after the customer migration?"
+                >
+                  Why are invoices failing? ↗</button
+                ><button
+                  data-question="Find constructed SQL queries and their callers"
+                >
+                  Where is SQL constructed? ↗</button
+                ><button
+                  data-question="Which functions share mutable state between calls?"
+                >
+                  What could leak state? ↗
+                </button>
+              </div>
+              <div id="answer" class="answer">
+                <div class="empty-symbol">⌕</div>
+                <h3>Follow the evidence.</h3>
+                <p>
+                  Search functions, error messages or architectural questions.
+                  Source references stay one click away.
+                </p>
+              </div>
+              <form id="question-form">
+                <label for="question" class="sr-only"
+                  >Investigation question</label
+                ><textarea
+                  id="question"
+                  maxlength="1500"
+                  placeholder="Why does changing the customer schema break invoices?"
+                  rows="3"
+                  required
+                ></textarea>
+                <div class="composer-footer">
+                  <label class="llm-option"
+                    ><input type="checkbox" id="use-llm" disabled /> Use
+                    configured LLM
+                    <span id="llm-hint">· local evidence available</span></label
+                  ><button
+                    class="button primary"
+                    type="submit"
+                    id="investigate-button"
+                  >
+                    Investigate <span>↗</span>
+                  </button>
+                </div>
+              </form>
+            </section>
+            <section class="panel evidence-panel">
+              <div class="panel-heading">
+                <span class="eyebrow">EVIDENCE & TOOL TRACE</span
+                ><span class="status-dot"></span>
+              </div>
+              <div id="evidence">
+                <p class="empty-copy">
+                  Source windows and tool activity will appear here. No invented
+                  confidence scores.
+                </p>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section id="repair" class="page" aria-label="Repair laboratory">
+          <div class="repair-banner">
+            <div>
+              <span class="eyebrow"
+                >INC-042 / THE SCHEMA THAT BROKE BILLING</span
+              >
+              <h2>
+                One field. Three failing tests.<br /><em
+                  >A verifiable recovery.</em
+                >
+              </h2>
+              <p>
+                Customer records moved to schema v2. Follow the broken contract
+                to the exact change.
+              </p>
+            </div>
+            <span class="incident-icon">↯</span>
+          </div>
+          <div class="repair-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">PROPOSED PATCH</span>
+                  <h2>Review before repair.</h2>
+                </div>
+                <span class="tiny-label">1 FILE</span>
+              </div>
+              <div class="patch-meta">
+                invoices.py <span>maintainer-authored fixture patch</span>
+              </div>
+              <pre id="diff" class="diff"></pre>
+              <div class="approval">
+                <label
+                  ><input type="checkbox" id="approve" /> I have reviewed this
+                  diff.</label
+                >
+                <p id="repair-scope">
+                  The runner tests a disposable copy of the bundled fixture.
+                  Imported repositories are never executed.
+                </p>
+                <button class="button primary" id="run-repair" disabled>
+                  Approve & verify repair <span>↗</span></button
+                ><button class="button small" id="download-patch">
+                  Download patch ↓
+                </button>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">VERIFICATION TIMELINE</span>
+                  <h2>Proof, step by step.</h2>
+                </div>
+              </div>
+              <div id="repair-results" class="repair-results">
+                <div class="timeline-step">
+                  <span>01</span>
+                  <div>
+                    <strong>Reproduce the failure</strong>
+                    <p>Run the original invoice test suite.</p>
+                  </div>
+                </div>
+                <div class="timeline-step">
+                  <span>02</span>
+                  <div>
+                    <strong>Apply the approved diff</strong>
+                    <p>Change full_name to display_name.</p>
+                  </div>
+                </div>
+                <div class="timeline-step">
+                  <span>03</span>
+                  <div>
+                    <strong>Verify the behaviour</strong>
+                    <p>Re-run all five tests and inspect the output.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section id="evaluation" class="page" aria-label="Evaluation results">
+          <div class="eval-intro">
+            <div>
+              <span class="eyebrow">MEASURED, NOT MARKETED</span>
+              <h2>Trust has a test suite.</h2>
+              <p>
+                Reproducible checks for retrieval, dependency impact, static
+                rules and repair. These are deterministic engine checks, not an
+                LLM benchmark.
+              </p>
+            </div>
+            <button class="button" id="download-report">
+              Export results ↓
+            </button>
+          </div>
+          <div class="stats" id="eval-stats"></div>
+          <section class="panel">
+            <div class="panel-heading">
+              <span class="eyebrow">LATEST RECORDED EVALUATION</span
+              ><span id="eval-date" class="muted"></span>
+            </div>
+            <div id="eval-table"></div>
+            <p class="panel-footnote">
+              Run <code>python3 scripts/evaluate.py</code> to regenerate this
+              report. Provider-dependent agent accuracy is not measured by this
+              suite.
+            </p>
+          </section>
+        </section>
+        <footer class="main-footer">
+          <span
+            >LegacyLens <span class="muted">/</span> An engineering portfolio by
+            Mohammed Banabilh</span
+          ><span>Source → evidence → understanding</span>
+        </footer>
+      </main>
+    </div>
+    <dialog id="source-dialog">
+      <div class="dialog-header">
+        <div>
+          <span class="eyebrow">SOURCE EVIDENCE</span>
+          <h2 id="source-title"></h2>
+        </div>
+        <button
+          class="button small"
+          id="close-source"
+          aria-label="Close source"
+        >
+          ✕
+        </button>
+      </div>
+      <pre id="source-code"></pre>
+    </dialog>
+    <dialog id="about-dialog">
+      <div class="dialog-header">
+        <h2>Built to be inspected.</h2>
+        <button
+          class="button small"
+          id="close-about"
+          aria-label="Close explanation"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="about-copy">
+        <p>
+          LegacyLens is a portfolio application by Mohammed Banabilh, built with
+          AI development assistance.
+        </p>
+        <h3>What runs for real</h3>
+        <p>
+          The Python engine parses source using AST, builds import edges, flags
+          five code patterns and retrieves evidence with BM25. A local server
+          can run a read-only tool-calling LLM agent when configured.
+        </p>
+        <h3>What the demo demonstrates</h3>
+        <p>
+          Northstar is a fictional billing service with seeded defects. Its
+          repair is a predefined, reviewable patch. Five actual tests are run
+          before and after that patch. The hosted site replays recorded results;
+          the local app runs them on demand.
+        </p>
+        <h3>Boundaries</h3>
+        <p>
+          No arbitrary code execution, automatic production changes or
+          guaranteed root-cause claims. Import analysis remains in local server
+          memory. LLM mode sends retrieved source to your configured provider
+          only when selected. The graph represents imports, not measured runtime
+          traffic.
+        </p>
+      </div>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </body>
+</html>
