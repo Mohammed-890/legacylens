@@ -16,7 +16,7 @@ The 32-test automated suite adds malformed input, traversal and file limits, moc
 - Recorded evaluation: 19/19 checks passed.
 - JavaScript syntax: checked with Node.
 - Interface: manually exercised in the local browser, including mobile layout.
-- GitHub Actions: configured for Python 3.11, 3.12 and 3.13; the workflow badge is the source of current CI status.
+- GitHub Actions: supplied as `docs/github-actions.yml` for Python 3.11, 3.12 and 3.13. Not enabled: the publishing credential did not have workflow permission. Local test results are the verified results for this release.
 - Real paid LLM endpoint: not exercised; requires the user's provider credentials.
 - Docker execution: not exercised in the initial development environment.
 

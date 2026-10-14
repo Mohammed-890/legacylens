@@ -6,7 +6,7 @@ A software investigation workspace that turns a Python repository into a navigab
 
 Created by **Mohammed Banabilh**, with AI assistance for implementation, testing and documentation. An independent engineering portfolio project inspired by the difficulty of understanding older business software. It is not affiliated with any employer or software vendor.
 
-[![Verify LegacyLens](https://github.com/Mohammed-890/legacylens/actions/workflows/checks.yml/badge.svg)](https://github.com/Mohammed-890/legacylens/actions/workflows/checks.yml)
+[Source repository](https://github.com/Mohammed-890/legacylens) · [Owner-private preview](https://legacylens-mohammed.banabilh19.chatgpt.site)
 
 ## Run in 30 seconds
 
@@ -69,7 +69,7 @@ node --check web/app.js
 
 The implementation includes **32 automated tests** and **19 reproducible evaluation checks**. These cover retrieval, citations, static rules, imports, input boundaries, mocked agent calls, HTTP protections and the repair fixture. They are a small deterministic suite, **not a benchmark of LLM diagnosis quality**. The evaluation script regenerates the four JSON snapshots in `web/` with actual outputs and timestamps.
 
-GitHub Actions runs verification on Python 3.11, 3.12 and 3.13. Node is only needed for JavaScript syntax checking; it is not needed to run the app.
+A ready-to-enable [GitHub Actions workflow](docs/github-actions.yml) targets Python 3.11, 3.12 and 3.13. Move it to `.github/workflows/checks.yml` to enable CI. The publishing credential lacked GitHub's workflow permission, so automated CI is not active in this initial upload. Node is only needed for JavaScript syntax checking; it is not needed to run the app.
 
 ## Architecture
 
